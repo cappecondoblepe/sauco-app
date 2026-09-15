@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sauco Tienda Botánica - Gestión</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Oswald:wght@500&display=swap" rel="stylesheet">
+    <style>
+        /* PALETA DE COLORES Y TIPOGRAFÍA SAUCO */
+        :root {
+            --morado-sauco: #5c4068;
+            --magenta-accion: #e05a7e;
+            --verde-exito: #a8d08d;
+            --fondo-claro: #f7f9f7;
+            --texto-oscuro: #333333;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--fondo-claro);
+            color: var(--texto-oscuro);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--morado-sauco);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 2px;
+        }
+
+        header h1 { margin: 0; font-size: 2rem; }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        /* ESTILOS DEL FORMULARIO */
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        input, select, textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .btn-principal {
+            background-color: var(--magenta-accion);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        .btn-principal:hover { opacity: 0.9; }
+        
+        .btn-secundario {
+            background-color: #777;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-exito {
+            background-color: var(--verde-exito);
+            color: #333;
+        }
+
+        /* ESTILOS DE LA TABLA */
+        .table-container { overflow-x: auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        th { background-color: var(--morado-sauco); color: white; }
+        
+        .loader {
+            text-align: center;
+            font-weight: bold;
+            color: var(--magenta-accion);
+            display: none;
+        }
+
+        /* UTILIDAD: Ocultar ID */
+        #ID_TRANSACCION { display: none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SAUCO</h1>
+        <p style="margin:0; font-size: 0.9rem;">TIENDA BOTÁNICA</p>
+    </header>
+
+    <div class="container">
+        <!-- ESTADO DEL SISTEMA -->
+        <p class="loader" id="mensaje-estado">Sincronizando con la base de datos...</p>
+
+        <!-- SECCIÓN 1: FORMULARIO -->
+        <div class="card">
+            <h2 id="titulo-form">Registrar Operación</h2>
+            <form id="form-operacion">
+                <!-- Campo oculto para cuando editamos -->
+                <input type="text" id="ID_TRANSACCION" name="ID_TRANSACCION">
+
+                <div class="form-group">
+                    <label>Fecha *</label>
+                    <input type="date" id="FECHA" name="FECHA" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Operación *</label>
+                    <select id="OPERACION" name="OPERACION" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="Ventas en Salón">Ventas en Salón</option>
+                        <option value="Pagos Proveedores">Pagos Proveedores</option>
+                        <option value="Compra a Crédito (Deuda)">Compra a Crédito (Deuda)</option>
+                        <option value="Gastos Diarios">Gastos Diarios</option>
+                        <option value="Talleres">Talleres</option>
+                        <option value="Jardinería">Jardinería</option>
+                        <!-- Acá podés agregar las demás de tu pestaña LISTAS -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Monto ($) *</label>
+                    <input type="number" id="MONTO" name="MONTO" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Forma de Pago *</label>
+                    <select id="FORMA DE PAGO" name="FORMA DE PAGO" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Transferencia">Transferencia</option>
+                        <option value="Débito">Débito</option>
+                        <option value="Crédito">Crédito</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Categoría Venta</label>
+                    <input type="text" id="CATEGORÍA VENTA" name="CATEGORÍA VENTA" placeholder="Ej: Plantas, Objetos deco...">
+                </div>
+
+                <div class="form-group">
+                    <label>Categoría Proveedor</label>
+                    <input type="text" id="CATEGORIA PROVEEDOR" name="CATEGORIA PROVEEDOR" placeholder="Ej: Mercado, Roxana...">
+                </div>
+
+                <div class="form-group">
+                    <label>Estado de Pago</label>
+                    <select id="ESTADO DE PAGO" name="ESTADO DE PAGO">
+                        <option value="">N/A</option>
+                        <option value="Pagado">Pagado</option>
+                        <option value="Pendiente">Pendiente</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Descripción / Observaciones</label>
+                    <textarea id="DESCRIPCION" name="DESCRIPCION" rows="2"></textarea>
+                </div>
+
+                <button type="button" class="btn-principal" onclick="procesarFormulario()">Guardar Operación</button>
+                <button type="button" id="btn-cancelar" class="btn-secundario" style="display:none; width:100%; margin-top:10px;" onclick="cancelarEdicion()">Cancelar Edición</button>
+            </form>
+        </div>
+
+        <!-- SECCIÓN 2: HISTORIAL -->
+        <div class="card">
+            <h2>Últimas Operaciones</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Operación</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-body">
+                        <!-- Las filas se llenan con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // PUNTO CRÍTICO: PEGÁ TU URL DE APPS SCRIPT ACÁ
+        // ==========================================
+        const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxd4pqD8LfDkD7IwX2eS_Wzo5enW9YO2YrbC1HGXt5FwcKTTXck1JskVgm8tlXhpqXd/exec';
+        
+        let datosGlobales = []; // Para almacenar el historial en memoria
+
+        // Al iniciar, cargar la fecha de hoy por defecto y traer datos
+        window.onload = () => {
+            document.getElementById('FECHA').valueAsDate = new Date();
+            cargarHistorial();
+        };
+
+        // Mostrar/Ocultar mensajes de carga
+        function mostrarLoader(mostrar, texto = "Procesando...") {
+            const loader = document.getElementById('mensaje-estado');
+            loader.textContent = texto;
+            loader.style.display = mostrar ? 'block' : 'none';
+        }
+
+        // ==========================================
+        // GET: LEER HISTORIAL (Opción A)
+        // ==========================================
+        async function cargarHistorial() {
+            mostrarLoader(true, "Cargando últimas operaciones...");
+            try {
+                const respuesta = await fetch(WEBHOOK_URL);
+                const json = await respuesta.json();
+                
+                if (json.estado === 'exito') {
+                    datosGlobales = json.datos;
+                    renderizarTabla();
+                } else {
+                    alert("Error al cargar: " + json.mensaje);
+                }
+            } catch (error) {
+                console.error("Error de conexión:", error);
+                alert("Error de conexión con la base de datos.");
+            }
+            mostrarLoader(false);
+        }
+
+        // Dibuja la tabla HTML con los datos
+        function renderizarTabla() {
+            const tbody = document.getElementById('tabla-body');
+            tbody.innerHTML = ''; // Limpiamos
+
+            // Mostramos solo las últimas 20 para no saturar la pantalla del celu
+            const aMostrar = datosGlobales.slice(0, 20);
+
+            aMostrar.forEach(fila => {
+                const tr = document.createElement('tr');
+                
+                // Formateamos el monto para que se vea lindo
+                const monto = parseFloat(fila['MONTO']) || 0;
+                
+                tr.innerHTML = `
+                    <td>${fila['FECHA'] ? new Date(fila['FECHA']).toLocaleDateString() : ''}</td>
+                    <td>${fila['OPERACION'] || ''}</td>
+                    <td>$ ${monto.toLocaleString('es-AR')}</td>
+                    <td>${fila['ESTADO DE PAGO'] || '-'}</td>
+                    <td>
+                        <button class="btn-secundario" onclick="prepararEdicion('${fila['ID_TRANSACCION']}')">Editar</button>
+                        ${fila['ESTADO DE PAGO'] === 'Pendiente' ? `<button class="btn-secundario btn-exito" onclick="saldarDeudaRapido('${fila['ID_TRANSACCION']}')" style="margin-top:5px;">Saldar</button>` : ''}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ==========================================
+        // VALIDACIONES FRONTEND Y POST (Escritura)
+        // ==========================================
+        async function procesarFormulario() {
+            const form = document.getElementById('form-operacion');
+            
+            // Reglas de negocio (Validaciones)
+            const fecha = document.getElementById('FECHA').value;
+            const operacion = document.getElementById('OPERACION').value;
+            const monto = document.getElementById('MONTO').value;
+            const formaPago = document.getElementById('FORMA DE PAGO').value;
+            const catVenta = document.getElementById('CATEGORÍA VENTA').value;
+            const catProveedor = document.getElementById('CATEGORIA PROVEEDOR').value;
+
+            if (!fecha || !operacion || !monto || !formaPago) {
+                alert("Por favor, completá los campos obligatorios (*).");
+                return;
+            }
+
+            if (operacion.includes("Venta") && !catVenta) {
+                alert("Para una Venta, es obligatorio indicar la 'Categoría Venta'.");
+                return;
+            }
+
+            if ((operacion === "Pagos Proveedores" || operacion.includes("Deuda")) && !catProveedor) {
+                alert("Para pagos o compras, es obligatorio indicar la 'Categoría Proveedor'.");
+                return;
+            }
+
+            // Recolectar datos
+            const formData = new FormData(form);
+            const datosEnviados = Object.fromEntries(formData.entries());
+            
+            // Determinar si es una nueva carga o una edición
+            const idTransaccion = document.getElementById('ID_TRANSACCION').value;
+            const accion = idTransaccion ? 'editar_operacion' : 'nueva_operacion';
+
+            mostrarLoader(true, "Guardando operación...");
+            
+            try {
+                const respuesta = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        accion: accion,
+                        datos: datosEnviados
+                    })
+                });
+                
+                const json = await respuesta.json();
+                
+                if (json.estado === 'exito') {
+                    alert(json.mensaje);
+                    form.reset();
+                    document.getElementById('FECHA').valueAsDate = new Date();
+                    cancelarEdicion(); // Resetea la interfaz
+                    cargarHistorial(); // Refresca la tabla
+                } else {
+                    alert("Error al guardar: " + json.mensaje);
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Error de conexión al intentar guardar.");
+            }
+            mostrarLoader(false);
+        }
+
+        // ==========================================
+        // FUNCIONES DE EDICIÓN Y SALDAR DEUDA
+        // ==========================================
+        function prepararEdicion(idBuscado) {
+            // Buscamos la fila en nuestra memoria
+            const fila = datosGlobales.find(f => f['ID_TRANSACCION'] === idBuscado);
+            if (!fila) return;
+
+            // Rellenamos el formulario
+            document.getElementById('ID_TRANSACCION').value = fila['ID_TRANSACCION'];
+            document.getElementById('OPERACION').value = fila['OPERACION'] || '';
+            document.getElementById('MONTO').value = fila['MONTO'] || '';
+            document.getElementById('FORMA DE PAGO').value = fila['FORMA DE PAGO'] || '';
+            document.getElementById('CATEGORÍA VENTA').value = fila['CATEGORÍA VENTA'] || '';
+            document.getElementById('CATEGORIA PROVEEDOR').value = fila['CATEGORIA PROVEEDOR'] || '';
+            document.getElementById('ESTADO DE PAGO').value = fila['ESTADO DE PAGO'] || '';
+            document.getElementById('DESCRIPCION').value = fila['DESCRIPCION'] || '';
+            
+            // Formatear fecha para el input type="date"
+            if (fila['FECHA']) {
+                const d = new Date(fila['FECHA']);
+                document.getElementById('FECHA').value = d.toISOString().split('T')[0];
+            }
+
+            // Cambiamos la interfaz visual
+            document.getElementById('titulo-form').textContent = "✏️ Editando Operación";
+            document.getElementById('btn-cancelar').style.display = "block";
+            window.scrollTo(0, 0); // Llevamos al Chini arriba del todo
+        }
+
+        function cancelarEdicion() {
+            document.getElementById('ID_TRANSACCION').value = "";
+            document.getElementById('titulo-form').textContent = "Registrar Operación";
+            document.getElementById('btn-cancelar').style.display = "none";
+            document.getElementById('form-operacion').reset();
+            document.getElementById('FECHA').valueAsDate = new Date();
+        }
+
+        async function saldarDeudaRapido(id) {
+            const fechaPago = prompt("Ingresá la fecha de pago real (Formato AAAA-MM-DD):", new Date().toISOString().split('T')[0]);
+            
+            if (!fechaPago) return; // Si cancela, no hacemos nada
+
+            mostrarLoader(true, "Saldando deuda...");
+            try {
+                const respuesta = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        accion: 'saldar_deuda',
+                        datos: {
+                            'ID_TRANSACCION': id,
+                            'FECHA DE PAGO REAL': fechaPago
+                        }
+                    })
+                });
+                
+                const json = await respuesta.json();
+                if (json.estado === 'exito') {
+                    alert("¡Deuda saldada!");
+                    cargarHistorial();
+                } else {
+                    alert("Error: " + json.mensaje);
+                }
+            } catch (error) {
+                alert("Error de conexión.");
+            }
+            mostrarLoader(false);
+        }
+    </script>
+</body>
+</html>
